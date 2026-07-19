@@ -1,0 +1,20 @@
+@let movieData = movie();
+@let sessionData = session();
+
+@if(movieData && sessionData){
+  <div class="session-header">
+    <img class="session-header__poster" [src]="movieData.posterUrl" [alt]="movieData.title"/>
+    <div>
+      <p class="session-header__label">Buy tickets to</p>
+      <p class="session-header__title">{{movieData.title}}</p>
+      <p class="session-header__meta">
+        <span>Hall {{sessionData.hallId}}</span>
+        <span>{{sessionData.format}}</span>
+      </p>
+      <p class="session-header__meta">
+        <span>{{sessionData.date}}</span>
+        <span>{{sessionData.time}}</span>
+      </p>
+    </div>
+  </div>
+}

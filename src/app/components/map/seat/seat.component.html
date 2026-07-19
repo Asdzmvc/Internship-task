@@ -1,0 +1,14 @@
+@let seatData = seat();
+
+@if (seatData) {
+  <button
+    class="seat"
+    [class.seat--booked]="isBooked()"
+    [class.seat--selected]="isSelected()"
+    [disabled]="isBooked()"
+    (click)="toggle()">
+    {{ seatData.number }}
+  </button>
+} @else {
+  <div class="seat seat--empty"></div>
+}

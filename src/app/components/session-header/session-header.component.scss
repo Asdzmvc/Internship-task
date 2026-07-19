@@ -1,0 +1,38 @@
+.session-header {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 24px;
+  background-color: #101828;
+  color: #fff;
+}
+
+.session-header__poster {
+  width: 110px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.session-header__label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #90caf9;
+  margin: 0 0 4px;
+}
+
+.session-header__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.session-header__meta {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  color: #cfd8dc;
+  margin: 4px 0;
+}

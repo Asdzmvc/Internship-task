@@ -1,0 +1,16 @@
+@let isLoading = sessionLoading() || mapLoading();
+
+@if (isLoading){
+  <app-loader></app-loader>
+} @else {
+  @let sessionData = session();
+
+  <app-session-header
+    [movieId]="sessionData!.movieId"
+    [sessionId]="sessionId!"/>
+
+  <div class="session-layout">
+    <app-map class="session-layout__map" />
+    <app-cart class="session-layout__cart" />
+  </div>
+}

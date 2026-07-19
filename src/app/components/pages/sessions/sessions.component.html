@@ -1,0 +1,10 @@
+@if (sessionsLoading()) {
+  <app-loader/>
+} @else {
+  <div class="hero">
+    <h1>Now Showing</h1>
+    <p>Grab your tickets for the latest blockbusters.</p>
+  </div>
+
+  <app-session-list/>
+}

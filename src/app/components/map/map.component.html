@@ -1,0 +1,17 @@
+@if (mapStore.rows().length) {
+  <div class="map">
+    <div class="map__screen">Screen</div>
+
+    <div class="map__rows">
+      @for (row of mapStore.rows(); track $index) {
+        <app-row [seats]="row" />
+      }
+    </div>
+
+    <div class="map__legend">
+      <span class="legend-item"><span class="legend-swatch legend-swatch--available"></span> Available</span>
+      <span class="legend-item"><span class="legend-swatch legend-swatch--selected"></span> Selected</span>
+      <span class="legend-item"><span class="legend-swatch legend-swatch--booked"></span> Booked</span>
+    </div>
+  </div>
+}

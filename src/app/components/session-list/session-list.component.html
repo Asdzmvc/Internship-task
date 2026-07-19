@@ -1,0 +1,46 @@
+<div class="search-bar">
+  <span class="pi pi-search search-bar__icon"></span>
+  <input
+    type="text"
+    class="search-bar__input"
+    placeholder="Search by movie title..."
+    [value]="searchQuery()"
+    (input)="onSearchInput($event)"
+  />
+</div>
+
+@if (sessions().length === 0) {
+  <p class="search-empty">No sessions found for "{{ searchQuery() }}".</p>
+} @else {
+  <div class="session-grid">
+    @for (session of sessions(); track session.id) {
+      @let movie = getMovieById(session.movieId)();
+
+      @if(movie) {
+        <div class="session-card">
+          <img class="session-card__poster" [src]="movie.posterUrl" [alt]="movie.title" />
+          <div class="session-card__body">
+            <h3 class="session-card__title">{{ movie.title }}</h3>
+            <div class="session-card__meta">
+              <span>{{ movie.releaseYear }}</span>
+              <span>{{ movie.durationMinutes }} min</span>
+              <span>{{ movie.ageRating }}</span>
+              <span class="session-card__rating">★ {{ movie.rating }}</span>
+            </div>
+            <div class="session-card__session">
+              <span>{{ session.date }} · {{ session.time }}</span>
+              <span>Hall {{ session.hallId }} · {{ session.format }}</span>
+            </div>
+          </div>
+          <p-button
+            [aria-label]="'Buy ticket for ' + movie.title + ' session at ' + session.time + ' on ' + session.date"
+            class="session-card__cta"
+            icon="pi pi-chevron-right"
+            iconOnly
+            [routerLink]="'./' + session.id">
+          </p-button>
+        </div>
+      }
+    }
+  </div>
+}

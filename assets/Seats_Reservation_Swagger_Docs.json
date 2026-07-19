@@ -1,0 +1,494 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Seats Reservation API",
+    "description": "REST API for cinema seats reservation: manage places (seats) and sessions.",
+    "contact": { "name": "ITPU Internship Team", "email": "internship@itpu.uz" },
+    "license": { "name": "Apache 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0" },
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:8080", "description": "Local development server" }],
+  "tags": [
+    { "name": "Sessions", "description": "Endpoints for managing movie screening sessions" },
+    { "name": "Places", "description": "Endpoints for managing cinema seats (places)" }
+  ],
+  "paths": {
+    "/sessions/{id}": {
+      "get": {
+        "tags": ["Sessions"],
+        "summary": "Get a session by ID",
+        "description": "Returns a single movie session by its numeric ID.",
+        "operationId": "getSession",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Numeric ID of the session",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session found",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSessionDTO" } } }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSessionDTO" } } }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Sessions"],
+        "summary": "Update a session",
+        "description": "Updates an existing movie session by its ID.",
+        "operationId": "updateSession",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Numeric ID of the session to update",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/SaveSessionDTO" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Session updated successfully",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSessionDTO" } } }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSessionDTO" } } }
+          },
+          "404": {
+            "description": "Session not found",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSessionDTO" } } }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Sessions"],
+        "summary": "Delete a session",
+        "description": "Deletes a movie session by its ID.",
+        "operationId": "deleteSession",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Numeric ID of the session to delete",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Session deleted successfully" },
+          "404": { "description": "Session not found" }
+        }
+      }
+    },
+    "/places/{id}": {
+      "get": {
+        "tags": ["Places"],
+        "summary": "Get a place by ID",
+        "description": "Returns a single cinema seat by its numeric ID.",
+        "operationId": "getPlace",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Numeric ID of the place",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Place found",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSeatDTO" } } }
+          },
+          "404": {
+            "description": "Place not found",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSeatDTO" } } }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Places"],
+        "summary": "Update a place",
+        "description": "Updates an existing cinema seat by its ID.",
+        "operationId": "updatePlace",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Numeric ID of the place to update",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/SaveSeatDTO" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Place updated successfully",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSeatDTO" } } }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSeatDTO" } } }
+          },
+          "404": {
+            "description": "Place not found",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSeatDTO" } } }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Places"],
+        "summary": "Delete a place",
+        "description": "Deletes a cinema seat by its ID.",
+        "operationId": "deletePlace",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Numeric ID of the place to delete",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Place deleted successfully" },
+          "404": { "description": "Place not found" }
+        }
+      }
+    },
+    "/sessions": {
+      "get": {
+        "tags": ["Sessions"],
+        "summary": "Get all sessions",
+        "description": "Returns a paginated list of all movie screening sessions.",
+        "operationId": "getAllSessions",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/Pageable" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page of sessions returned successfully",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/PageGetSessionDTO" } } }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Sessions"],
+        "summary": "Create a new session",
+        "description": "Creates a new movie screening session and returns the saved object.",
+        "operationId": "createSession",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/SaveSessionDTO" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Session created successfully",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSessionDTO" } } }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSessionDTO" } } }
+          }
+        }
+      }
+    },
+    "/places": {
+      "get": {
+        "tags": ["Places"],
+        "summary": "Get all places",
+        "description": "Returns a paginated list of all cinema seats.",
+        "operationId": "getAllPlaces",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/Pageable" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page of places returned successfully",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/PageGetSeatDTO" } } }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Places"],
+        "summary": "Create a new place",
+        "description": "Creates a new cinema seat/place and returns the saved object.",
+        "operationId": "createPlace",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/SaveSeatDTO" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Place created successfully",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSeatDTO" } } }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/GetSeatDTO" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SaveSessionDTO": {
+        "type": "object",
+        "description": "Request model for creating or updating a movie session",
+        "properties": {
+          "movieId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the movie to link to this session",
+            "example": 42
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the session (max 150 chars)",
+            "example": "Inception – Evening Show",
+            "maxLength": 150,
+            "minLength": 0
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the session (ISO 8601)",
+            "example": "2026-07-15"
+          },
+          "time": {
+            "type": "string",
+            "description": "Start time of the session (ISO 8601)",
+            "example": "19:30:00"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language of the screening",
+            "enum": ["ENGLISH", "RUSSIAN", "UZBEK"],
+            "example": "ENGLISH"
+          },
+          "format": {
+            "type": "string",
+            "description": "Format of the screening",
+            "enum": ["TWO_D", "THREE_D", "IMAX"],
+            "example": "TWO_D"
+          }
+        },
+        "required": ["date", "movieId", "time"]
+      },
+      "GetSessionDTO": {
+        "type": "object",
+        "description": "Movie session response model",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique identifier of the session",
+            "example": 1
+          },
+          "movieId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the associated movie",
+            "example": 42
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title of the session",
+            "example": "Inception – Evening Show"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the session (ISO 8601)",
+            "example": "2026-07-15"
+          },
+          "time": {
+            "type": "string",
+            "description": "Start time of the session (ISO 8601)",
+            "example": "19:30:00"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language of the movie screening",
+            "enum": ["ENGLISH", "RUSSIAN", "UZBEK"],
+            "example": "ENGLISH"
+          },
+          "format": {
+            "type": "string",
+            "description": "Format of the movie screening",
+            "enum": ["TWO_D", "THREE_D", "IMAX"],
+            "example": "TWO_D"
+          }
+        }
+      },
+      "SaveSeatDTO": {
+        "type": "object",
+        "description": "Request model for creating or updating a cinema seat/place",
+        "properties": {
+          "row": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Row number of the seat in the hall",
+            "example": 3
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Seat number within the row",
+            "example": 15
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the seat",
+            "enum": ["ACTIVE", "DEACTIVATED"],
+            "example": "ACTIVE"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "description": "Whether the seat is available for booking",
+            "example": true
+          },
+          "comment": {
+            "type": "string",
+            "description": "Optional comment about the seat",
+            "example": "VIP seat"
+          }
+        },
+        "required": ["isAvailable", "number", "row"]
+      },
+      "GetSeatDTO": {
+        "type": "object",
+        "description": "Cinema seat/place response model",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unique identifier of the seat",
+            "example": 1
+          },
+          "row": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Row number of the seat in the hall",
+            "example": 3
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Seat number within the row",
+            "example": 15
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the seat",
+            "enum": ["ACTIVE", "DEACTIVATED"],
+            "example": "ACTIVE"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "description": "Whether the seat is available for booking",
+            "example": true
+          },
+          "comment": {
+            "type": "string",
+            "description": "Optional comment about the seat (e.g. damaged, reserved)",
+            "example": "VIP seat"
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer", "format": "int32", "minimum": 0 },
+          "size": { "type": "integer", "format": "int32", "minimum": 1 },
+          "sort": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "PageGetSessionDTO": {
+        "type": "object",
+        "properties": {
+          "totalElements": { "type": "integer", "format": "int64" },
+          "totalPages": { "type": "integer", "format": "int32" },
+          "first": { "type": "boolean" },
+          "last": { "type": "boolean" },
+          "numberOfElements": { "type": "integer", "format": "int32" },
+          "size": { "type": "integer", "format": "int32" },
+          "content": { "type": "array", "items": { "$ref": "#/components/schemas/GetSessionDTO" } },
+          "number": { "type": "integer", "format": "int32" },
+          "sort": { "$ref": "#/components/schemas/SortObject" },
+          "pageable": { "$ref": "#/components/schemas/PageableObject" },
+          "empty": { "type": "boolean" }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": { "type": "integer", "format": "int64" },
+          "sort": { "$ref": "#/components/schemas/SortObject" },
+          "unpaged": { "type": "boolean" },
+          "paged": { "type": "boolean" },
+          "pageSize": { "type": "integer", "format": "int32" },
+          "pageNumber": { "type": "integer", "format": "int32" }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": { "type": "boolean" },
+          "unsorted": { "type": "boolean" },
+          "sorted": { "type": "boolean" }
+        }
+      },
+      "PageGetSeatDTO": {
+        "type": "object",
+        "properties": {
+          "totalElements": { "type": "integer", "format": "int64" },
+          "totalPages": { "type": "integer", "format": "int32" },
+          "first": { "type": "boolean" },
+          "last": { "type": "boolean" },
+          "numberOfElements": { "type": "integer", "format": "int32" },
+          "size": { "type": "integer", "format": "int32" },
+          "content": { "type": "array", "items": { "$ref": "#/components/schemas/GetSeatDTO" } },
+          "number": { "type": "integer", "format": "int32" },
+          "sort": { "$ref": "#/components/schemas/SortObject" },
+          "pageable": { "$ref": "#/components/schemas/PageableObject" },
+          "empty": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

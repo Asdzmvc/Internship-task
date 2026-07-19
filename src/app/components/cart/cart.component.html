@@ -1,0 +1,32 @@
+<div class="cart">
+  <h2 class="cart__title">Your Selection</h2>
+
+  @if (selectedSeats().length === 0) {
+    <p class="cart__empty">No seats selected yet. Tap an available seat to add it here.</p>
+  } @else {
+    <ul class="cart__list">
+      @for (seat of selectedSeats(); track seat.id) {
+        <li class="cart__item">
+          <span>Row {{ seat.row }}, Seat {{ seat.number }}</span>
+          <span class="cart__item-right">
+            <span>{{ getSeatPrice(seat).toLocaleString() }} UZS</span>
+            <button class="cart__remove" (click)="removeSeat(seat)" aria-label="Remove seat">✕</button>
+          </span>
+        </li>
+      }
+    </ul>
+
+    <div class="cart__total">
+      <span>Total</span>
+      <span>{{ total().toLocaleString() }} UZS</span>
+    </div>
+  }
+
+  <p-button
+    class="cart__checkout"
+    label="Checkout"
+    icon="pi pi-credit-card"
+    [disabled]="selectedSeats().length === 0"
+    (click)="checkout()">
+  </p-button>
+</div>
