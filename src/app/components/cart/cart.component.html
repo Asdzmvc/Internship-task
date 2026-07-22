@@ -22,11 +22,15 @@
     </div>
   }
 
+  @if (checkoutError()) {
+    <p class="cart__error">{{ checkoutError() }}</p>
+  }
+
   <p-button
     class="cart__checkout"
-    label="Checkout"
+    [label]="isCheckingOut() ? 'Booking...' : 'Checkout'"
     icon="pi pi-credit-card"
-    [disabled]="selectedSeats().length === 0"
+    [disabled]="selectedSeats().length === 0 || isCheckingOut()"
     (click)="checkout()">
   </p-button>
 </div>

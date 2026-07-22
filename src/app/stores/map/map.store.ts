@@ -1,22 +1,28 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, type, withComputed, withMethods, withState } from '@ngrx/signals';
 import { addEntity, removeAllEntities, removeEntity, withEntities } from '@ngrx/signals/entities';
-import { IPriceCategory, ISeat, ISessionSeat } from '@app/models';
+import { IPriceCategory, ISeat, ISessionSeat, SeatStatus } from '@app/models';
 import { ApiService } from '@app/services';
 import { forkJoin } from 'rxjs';
 
 type MapState = {
+  currentSessionId: number | null;
   hallSeats: (ISeat | null)[];
   sessionSeats: ISessionSeat[];
   priceCategories: IPriceCategory[];
   isLoading: boolean;
+  isCheckingOut: boolean;
+  checkoutError: string | null;
 };
 
 const initialState: MapState = {
+  currentSessionId: null,
   hallSeats: [],
   sessionSeats: [],
   priceCategories: [],
   isLoading: false,
+  isCheckingOut: false,
+  checkoutError: null,
 };
 
 enum MapCollections {
@@ -69,7 +75,7 @@ export const MapStore = signalStore(
   })),
   withMethods((store, apiService = inject(ApiService)) => ({
     loadHall(hallId: number, sessionId: number) {
-      patchState(store, () => ({ isLoading: true }));
+      patchState(store, () => ({ isLoading: true, currentSessionId: sessionId }));
 
       forkJoin({
         seats: apiService.getSeatsByHall(hallId),
@@ -108,9 +114,53 @@ export const MapStore = signalStore(
       return store.priceCategories().find(c => c.id === String(seat.priceCategoryId))?.price ?? 0;
     },
 
-    /** Empties the cart — used after the (placeholder) checkout action. */
+    /** Empties the cart without booking anything. */
     clearSelection() {
       patchState(store, removeAllEntities({ collection: MapCollections.SelectedSeats }));
+    },
+
+    /**
+     * Actually books every selected seat by POSTing a session-seat record for
+     * each one. This is what was missing before — Checkout previously only
+     * showed an alert and never talked to the backend at all.
+     */
+    checkout(customerName: string, contact: string) {
+      const sessionId = store.currentSessionId();
+      const selectedSeats = store.selectedSeatsEntities();
+
+      if (!sessionId || selectedSeats.length === 0) {
+        return;
+      }
+
+      patchState(store, { isCheckingOut: true, checkoutError: null });
+
+      const bookings = selectedSeats.map(seat =>
+        apiService.createSessionSeat({
+          sessionId,
+          seatId: seat.id,
+          status: SeatStatus.Active,
+          isAvailable: false,
+          customerName,
+          contact,
+        })
+      );
+
+      forkJoin(bookings).subscribe({
+        next: (createdSessionSeats) => {
+          patchState(store, (state) => ({
+            sessionSeats: [...state.sessionSeats, ...createdSessionSeats],
+            isCheckingOut: false,
+          }));
+          patchState(store, removeAllEntities({ collection: MapCollections.SelectedSeats }));
+        },
+        error: (err) => {
+          patchState(store, {
+            isCheckingOut: false,
+            checkoutError: 'Checkout failed — one or more seats could not be booked. Please try again.',
+          });
+          console.error('Checkout failed:', err);
+        },
+      });
     },
   })),
 );

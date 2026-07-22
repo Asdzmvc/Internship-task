@@ -121,6 +121,28 @@ export class ApiService {
     // wasting a request that would just 404.
     return of(MOCK_PRICE_CATEGORIES).pipe(delay(300));
   }
+
+  /**
+   * Books a seat for a session — this is what actually marks a seat as
+   * unavailable for everyone else. Called once per selected seat at checkout.
+   */
+  createSessionSeat(payload: Omit<ISessionSeat, 'id'>) {
+    return this.httpClient.post<ISessionSeat>(`${this.baseUrl}/session-seats`, payload).pipe(
+      map(normalizeSessionSeat),
+    );
+  }
+
+  /** Updates an existing session-seat record (e.g. changing customer info or status). */
+  updateSessionSeat(id: number, payload: Partial<Omit<ISessionSeat, 'id'>>) {
+    return this.httpClient.put<ISessionSeat>(`${this.baseUrl}/session-seats/${id}`, payload).pipe(
+      map(normalizeSessionSeat),
+    );
+  }
+
+  /** Cancels a booking by deleting its session-seat record, freeing the seat back up. */
+  deleteSessionSeat(id: number) {
+    return this.httpClient.delete<void>(`${this.baseUrl}/session-seats/${id}`);
+  }
 }
 
 /**

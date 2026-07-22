@@ -21,6 +21,8 @@ export class CartComponent {
   );
 
   protected readonly total = this.mapStore.cartTotal;
+  protected readonly isCheckingOut = this.mapStore.isCheckingOut;
+  protected readonly checkoutError = this.mapStore.checkoutError;
 
   getSeatPrice(seat: ISeat): number {
     return this.mapStore.getPriceForSeat(seat);
@@ -31,7 +33,14 @@ export class CartComponent {
   }
 
   checkout() {
-    // No real checkout/payment logic required for this homework — just a UI placeholder.
-    alert(`Checkout placeholder — ${this.selectedSeats().length} seat(s), total: ${this.total().toLocaleString()} UZS`);
+    // Minimal customer info collection — there's no dedicated form/auth flow
+    // yet, so we just ask for a name and contact number right here.
+    const customerName = prompt('Name for this booking:');
+    if (!customerName) return;
+
+    const contact = prompt('Contact phone number:');
+    if (!contact) return;
+
+    this.mapStore.checkout(customerName, contact);
   }
 }
